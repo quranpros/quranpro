@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quran Pro | Premium Audio & Reading</title>
+    
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans:['"Plus Jakarta Sans"', 'sans-serif'], 
+                        arabic: ['"Amiri"', 'serif'] 
+                    },
+                    colors: { 
+                        gold: { 300: '#FDE047', 400: '#E6C266', 500: '#D4AF37', 600: '#B5952F' }, 
+                        slate: { 850: '#151e2e', 900: '#0f172a', 950: '#020617', 975: '#01040A' } 
+                    },
+                    animation: {
+                        'spin-slow': 'spin 3s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+                        'slide-up': 'slideUp 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Premium CSS -->
+    <style>
+        body { 
+            background: #01040A; /* Ultra deep space black */
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.02) 0%, transparent 50%);
+            color: #f8fafc; 
+            overflow-x: hidden; 
+            -webkit-font-smoothing: antialiased; 
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Premium Glassmorphism */
+        .glass-nav { 
+            background: rgba(1, 4, 10, 0.75); 
+            backdrop-filter: blur(24px); 
+            -webkit-backdrop-filter: blur(24px); 
+            border-bottom: 1px solid rgba(255,255,255,0.03); 
+        }
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.015); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.04); 
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        .glass-card { 
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border: 1px solid rgba(255,255,255,0.05); 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .glass-card:hover { 
+            transform: translateY(-4px) scale(1.01); 
+            border-color: rgba(212, 175, 55, 0.3); 
+            background: linear-gradient(145deg, rgba(212, 175, 55, 0.05) 0%, rgba(255,255,255,0.01) 100%);
+            box-shadow: 0 20px 40px -15px rgba(212, 175, 55, 0.15); 
+        }
+
+        /* Layout Utilities */
+        .hidden-section { display: none !important; }
+        .active-surah { 
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%) !important; 
+            border-left: 2px solid #D4AF37 !important; 
+        }
+        
+        /* Sleek Scrollbar */
+        .custom-scroll::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.5); }
+        
+        /* Flawless Real-Time Ayah Highlighting */
+        .ayah-text { 
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid transparent; 
+        }
+        .active-ayah {
+            opacity: 1 !important; 
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.06) 0%, rgba(212, 175, 55, 0.01) 100%); 
+            border-color: rgba(212, 175, 55, 0.2);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        .active-ayah p { color: #fff !important; text-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+        .active-ayah .text-badge span { 
+            border-color: rgba(212, 175, 55, 0.5); 
+            color: #D4AF37; 
+            background: rgba(212, 175, 55, 0.1); 
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2); 
+        }
+
+        /* Responsive Text Sizing Fix */
+        @media (max-width: 640px) {
+            .active-ayah { transform: scale(1); } /* Prevent layout shift on mobile */
+        }
+
+        /* Custom Audio Progress Bar - iOS Style */
+        input[type=range] { 
+            -webkit-appearance: none; width: 100%; height: 4px; 
+            background: rgba(255,255,255,0.1); border-radius: 4px; 
+            outline: none; cursor: pointer; transition: height 0.2s; 
+        }
+        input[type=range]:hover { height: 6px; }
+        input[type=range]::-webkit-slider-thumb { 
+            -webkit-appearance: none; width: 0; height: 0; 
+            border-radius: 50%; background: #D4AF37; 
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.8); transition: all 0.2s; 
+        }
+        input[type=range]:hover::-webkit-slider-thumb, input[type=range]:active::-webkit-slider-thumb { 
+            width: 14px; height: 14px; 
+        }
+    </style>
+</head>
+<body class="font-sans w-full">
+
+    <!-- Premium Navbar -->
+    <nav class="fixed top-0 w-full z-50 glass-nav h-16 sm:h-20 flex items-center justify-between px-4 sm:px-8 lg:px-12 transition-all">
+        <!-- Brand -->
+        <div class="flex items-center gap-3 sm:gap-4 cursor-pointer group" onclick="location.reload()">
+            <div class="bg-gradient-to-br from-gold-400 to-gold-600 w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl shadow-[0_0_20px_rgba(212,175,55,0.3)] group-hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] flex items-center justify-center transition-all duration-500 group-hover:rotate-6">
+                <i class="ph-duotone ph-quran text-slate-950 text-2xl sm:text-3xl"></i>
+            </div>
+            <div class="flex flex-col">
+                <h1 class="font-extrabold text-xl sm:text-2xl tracking-tight text-white leading-none">Quran<span class="text-gold-500 font-light">Pro</span></h1>
+                <p class="text-[9px] sm:text-[10px] text-gray-400 font-medium tracking-[0.2em] uppercase mt-1">Premium Edition</p>
+            </div>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="hidden md:block w-full max-w-md relative group">
+            <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-gold-500 transition-colors text-lg"></i>
+            <input type="text" id="searchInput" placeholder="Search for your favorite reciter..." class="w-full bg-white/5 border border-white/10 rounded-full pl-12 pr-4 py-2.5 text-sm outline-none focus:border-gold-500/50 focus:bg-white/10 transition-all text-white placeholder-gray-500 shadow-inner backdrop-blur-md">
+        </div>
+
+        <!-- Mobile Search Toggle (Optional UI touch) -->
+        <div class="md:hidden">
+            <button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 border border-white/10">
+                <i class="ph ph-magnifying-glass text-lg"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Application Container -->
+    <main class="pt-24 sm:pt-32 pb-48 sm:pb-32 max-w-[1600px] mx-auto px-4 sm:px-8 min-h-screen flex flex-col w-full">
+        
+        <!-- Global Loading Spinner -->
+        <div id="loader" class="flex-1 flex flex-col items-center justify-center py-32 transition-opacity duration-500">
+            <div class="relative w-24 h-24 mb-8">
+                <div class="absolute inset-0 border-2 border-white/10 rounded-full"></div>
+                <div class="absolute inset-0 border-2 border-t-gold-500 border-r-gold-500 rounded-full animate-spin-slow"></div>
+                <div class="absolute inset-2 border-2 border-l-blue-400 border-b-blue-400 rounded-full animate-[spin_4s_linear_infinite_reverse]"></div>
+                <i class="ph-duotone ph-book-open text-3xl text-gold-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse"></i>
+            </div>
+            <h2 class="text-3xl font-extrabold text-white mb-3 tracking-tight">Initializing</h2>
+            <p class="text-gray-400 font-medium tracking-wide text-sm text-center max-w-xs">Connecting to global authentic databases for pristine audio.</p>
+        </div>
+
+        <!-- Directory & Dual Engine View -->
+        <div id="recitersView" class="hidden-section flex-1 animate-fade-in">
+            
+            <div class="text-center mb-10 sm:mb-14">
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4 tracking-tight drop-shadow-lg">Select <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-gold-600">Experience</span></h2>
+                <p class="text-gray-400 max-w-lg mx-auto text-sm sm:text-base leading-relaxed">Choose precise verse-by-verse highlighting or continuous flowing playback tailored to your reading style.</p>
+            </div>
+
+            <!-- Apple-Style Segmented Control for Modes -->
+            <div class="flex p-1.5 bg-slate-900/80 backdrop-blur-xl border border-white/5 rounded-full w-full sm:w-max mx-auto mb-8 sm:mb-12 shadow-2xl relative">
+                <button id="btnVerseMode" onclick="switchMode('verse')" class="flex-1 sm:w-64 py-3 sm:py-3.5 rounded-full transition-all duration-500 font-bold flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm tracking-wide z-10">
+                    <i class="ph-fill ph-text-align-justify text-lg sm:text-xl"></i> 
+                    <span id="verseCountText">Verse-by-Verse</span>
+                </button>
+                <button id="btnSurahMode" onclick="switchMode('surah')" class="flex-1 sm:w-64 py-3 sm:py-3.5 rounded-full transition-all duration-500 font-bold flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm tracking-wide z-10">
+                    <i class="ph-fill ph-waveform text-lg sm:text-xl"></i> 
+                    <span id="surahCountText">Full Surah</span>
+                </button>
+            </div>
+            
+            <!-- Reciters Grid -->
+            <div id="reciterGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 animate-slide-up"></div>
+        </div>
+
+        <!-- Interactive Surah & Reading View -->
+        <div id="surahView" class="hidden-section flex-1 animate-fade-in">
+            <!-- Top Bar Actions -->
+            <div class="flex items-center justify-between mb-6 sm:mb-8">
+                <button onclick="showReciters()" class="flex items-center gap-2 sm:gap-3 text-gray-400 hover:text-white transition-colors group font-semibold text-sm sm:text-base bg-white/5 py-2 sm:py-2.5 px-4 sm:px-5 rounded-full border border-white/5 hover:bg-white/10 backdrop-blur-md">
+                    <i class="ph-bold ph-arrow-left text-lg group-hover:-translate-x-1 transition-transform"></i> Reciters
+                </button>
+                <div id="qariHeaderSmall" class="hidden sm:block text-right">
+                    <!-- Dynamic Header text goes here -->
+                </div>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row gap-6 lg:gap-8 h-auto lg:h-[75vh] min-h-[600px]">
+                
+                <!-- Sidebar: Surah List (Scrollable top area on mobile, Sidebar on desktop) -->
+                <div class="w-full lg:w-1/3 xl:w-1/4 glass-panel rounded-3xl p-2 flex flex-col max-h-[35vh] lg:max-h-full">
+                    <div id="qariHeader" class="p-4 sm:p-5 border-b border-white/5 shrink-0 bg-white/[0.02] rounded-t-2xl"></div>
+                    <div id="surahList" class="flex-1 overflow-y-auto custom-scroll p-2 flex flex-col gap-1"></div>
+                </div>
+
+                <!-- Main Area: Ayah Reading & Scrolling -->
+                <div id="ayahScrollContainer" class="w-full lg:w-2/3 xl:w-3/4 glass-panel rounded-3xl p-4 sm:p-8 overflow-y-auto overflow-x-hidden custom-scroll relative scroll-smooth flex flex-col">
+                    
+                    <!-- Inner Loader -->
+                    <div id="ayahLoader" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-xl flex flex-col items-center justify-center z-20 rounded-3xl transition-opacity">
+                        <div class="w-12 h-12 border-2 border-white/10 border-t-gold-500 rounded-full animate-spin mb-4"></div>
+                        <p id="ayahLoaderText" class="text-sm text-gold-400 font-semibold tracking-wide">Preparing pristine audio...</p>
+                    </div>
+                    
+                    <!-- Ayahs Container -->
+                    <div id="ayahContainer" class="flex flex-col items-center justify-center h-full pb-32 max-w-screen-md mx-auto w-full">
+                        <div class="bg-gradient-to-b from-slate-800/50 to-transparent p-8 rounded-[2rem] border border-white/5 shadow-inner mb-6 text-center animate-float">
+                            <i class="ph-duotone ph-book-open-text text-6xl sm:text-7xl text-gold-500/80 mb-4"></i>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">Select a Surah</h3>
+                            <p class="text-gray-500 tracking-wide text-sm max-w-xs mx-auto">Begin your beautifully synced premium reading experience.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Global Floating Premium Player -->
+    <!-- Mobile: Snaps to bottom edge, full width. Desktop: Floats at bottom center -->
+    <div id="playerBar" class="fixed bottom-0 sm:bottom-8 left-0 sm:left-1/2 sm:-translate-x-1/2 w-full sm:w-[90%] max-w-[1000px] bg-slate-900/85 sm:bg-slate-900/70 backdrop-blur-2xl sm:backdrop-blur-3xl border-t sm:border border-white/10 p-4 sm:p-5 sm:rounded-3xl translate-y-[150%] transition-transform duration-700 cubic-bezier(0.4, 0, 0.2, 1) shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-50">
+        
+        <!-- Progress Timeline (Moved to top for mobile app feel) -->
+        <div class="w-full flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4 px-1 sm:px-2">
+            <span id="timeCurLabel" class="text-[10px] sm:text-xs text-gold-500 font-semibold w-10 sm:w-12 text-right font-mono tracking-wider">0:00</span>
+            <input type="range" id="progressBar" class="w-full relative z-10" value="0" min="0" max="100">
+            <span id="timeTotalLabel" class="text-[10px] sm:text-xs text-gray-400 font-medium w-10 sm:w-12 text-left font-mono tracking-wider">0:00</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 sm:gap-6 px-1 sm:px-4">
+            
+            <!-- Now Playing Info -->
+            <div class="flex items-center gap-3 sm:gap-5 w-1/3">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl sm:rounded-2xl flex items-center justify-center border border-white/5 relative overflow-hidden shrink-0 shadow-inner">
+                    <div class="absolute inset-0 bg-gold-500/10 animate-pulse"></div>
+                    <i class="ph-fill ph-speaker-hifi text-gold-500 text-xl sm:text-2xl relative z-10"></i>
+                </div>
+                <div class="overflow-hidden hidden sm:block">
+                    <h4 id="nowPlayingSurah" class="font-bold text-white text-base sm:text-lg truncate tracking-tight">Select</h4>
+                    <p id="nowPlayingQari" class="text-xs sm:text-sm text-gray-400 truncate mt-0.5">Reciter</p>
+                </div>
+                <!-- Mobile Only Minimal Text -->
+                <div class="overflow-hidden sm:hidden flex flex-col justify-center">
+                    <h4 id="nowPlayingSurahMob" class="font-bold text-white text-sm truncate">Surah</h4>
+                    <p id="nowPlayingQariMob" class="text-[10px] text-gray-400 truncate">Qari</p>
+                </div>
+            </div>
+
+            <!-- Playback Controls -->
+            <div class="flex items-center justify-center gap-4 sm:gap-8 w-1/3">
+                <button onclick="playPrevious()" class="text-gray-400 hover:text-white transition-colors p-2"><i class="ph-fill ph-skip-back-circle text-3xl sm:text-4xl"></i></button>
+                <button id="mainPlayBtn" onclick="togglePlay()" class="w-14 h-14 sm:w-16 sm:h-16 bg-white text-slate-950 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] shrink-0">
+                    <i class="ph-fill ph-play text-2xl sm:text-3xl ml-1"></i>
+                </button>
+                <button onclick="playNext()" class="text-gray-400 hover:text-white transition-colors p-2"><i class="ph-fill ph-skip-forward-circle text-3xl sm:text-4xl"></i></button>
+            </div>
+
+            <!-- Extra Actions -->
+            <div class="flex items-center justify-end gap-2 sm:gap-4 w-1/3">
+                <span id="ayahIndicator" class="text-[10px] sm:text-xs text-gold-400 font-bold border border-gold-500/30 bg-gold-500/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full hidden tracking-widest uppercase shadow-inner whitespace-nowrap">
+                    A: 1
+                </span>
+                <button id="repeatBtn" onclick="toggleRepeat()" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center bg-white/5 hover:bg-white/10 transition-colors border border-transparent hidden group">
+                    <i id="repeatIcon" class="ph-bold ph-repeat text-lg sm:text-xl text-gray-400 group-hover:text-white transition-colors"></i>
+                </button>
+            </div>
+        </div>
+        <!-- iPhone Safe Area Padding for mobile bottom -->
+        <div class="h-4 sm:hidden w-full"></div>
+    </div>
+
+    <!-- Hidden HTML5 Audio Element -->
+    <audio id="mainAudio" preload="auto"></audio>
+
+    <!-- Main JavaScript Logic -->
+    <script>
+        // --- 1. Global State Management ---
+        const state = { 
+            activeMode: 'verse', 
+            chapters: [], 
+            verseReciters:[], 
+            surahReciters:[], 
+            
+            ayahsList:[], 
+            currentAyahIndex: -1, 
+            isRepeating: false,
+            currentAudioUrl: ''
+        };
+        
+        // --- 2. DOM Elements Cache ---
+        const dom = {
+            audio: document.getElementById('mainAudio'),
+            loader: document.getElementById('loader'),
+            recitersView: document.getElementById('recitersView'),
+            surahView: document.getElementById('surahView'),
+            grid: document.getElementById('reciterGrid'),
+            surahList: document.getElementById('surahList'),
+            qariHeader: document.getElementById('qariHeader'),
+            qariHeaderSmall: document.getElementById('qariHeaderSmall'),
+            ayahContainer: document.getElementById('ayahContainer'),
+            ayahLoader: document.getElementById('ayahLoader'),
+            playerBar: document.getElementById('playerBar'),
+            playBtn: document.getElementById('mainPlayBtn'),
+            progress: document.getElementById('progressBar'),
+            timeCur: document.getElementById('timeCurLabel'),
+            timeTotal: document.getElementById('timeTotalLabel'),
+            ayahIndicator: document.getElementById('ayahIndicator'),
+            verseCountText: document.getElementById('verseCountText'),
+            surahCountText: document.getElementById('surahCountText'),
+            npSurah: document.getElementById('nowPlayingSurah'),
+            npQari: document.getElementById('nowPlayingQari'),
+            npSurahMob: document.getElementById('nowPlayingSurahMob'),
+            npQariMob: document.getElementById('nowPlayingQariMob')
+        };
+
+        // --- 3. Initialization ---
+        async function init() {
+            try {
+                const[chaptersRes, quranComRes, mp3QuranRes] = await Promise.all([
+                    fetch('https://api.quran.com/api/v4/chapters'),
+                    fetch('https://api.quran.com/api/v4/resources/recitations?language=en'),
+                    fetch('https://www.mp3quran.net/api/v3/reciters?language=eng')
+                ]);
+                
+                state.chapters = (await chaptersRes.json()).chapters;
+                
+                const qcData = await quranComRes.json();
+                state.verseReciters = qcData.recitations.sort((a,b) => a.reciter_name.localeCompare(b.reciter_name));
+                
+                const mp3Data = await mp3QuranRes.json();
+                const flattened =[];
+                mp3Data.reciters.forEach(qari => {
+                    qari.moshaf.forEach(m => {
+                        flattened.push({
+                            id: qari.id, 
+                            name: qari.name, 
+                            moshafName: m.name,
+                            server: m.server.replace('http:', 'https:'), 
+                            surahList: m.surah_list
+                        });
+                    });
+                });
+                state.surahReciters = flattened.sort((a,b) => a.name.localeCompare(b.name));
+                
+                dom.verseCountText.innerText = `Verse Sync (${state.verseReciters.length})`;
+                dom.surahCountText.innerText = `Full Audio (${state.surahReciters.length})`;
+
+                setTimeout(() => {
+                    switchMode('verse');
+                    dom.loader.classList.add('hidden-section');
+                    dom.recitersView.classList.remove('hidden-section');
+                }, 800); // Artificial slight delay for smooth initial animation feeling
+
+            } catch (err) {
+                console.error("Init Error:", err);
+                dom.loader.innerHTML = `
+                    <div class="text-center text-red-400 bg-red-500/10 p-6 sm:p-8 rounded-3xl border border-red-500/20 max-w-sm w-full mx-4 backdrop-blur-md">
+                        <i class="ph-duotone ph-warning-circle text-5xl sm:text-6xl mb-4 text-red-500 drop-shadow-md"></i>
+                        <h3 class="text-lg sm:text-xl font-bold mb-2 text-white">Connection Error</h3>
+                        <p class="text-xs sm:text-sm text-red-300 opacity-80">Unable to reach servers. Please check your internet.</p>
+                        <button onclick="location.reload()" class="mt-6 w-full bg-white text-slate-900 font-bold px-6 py-3 rounded-full hover:bg-gray-200 transition-colors">Retry Connection</button>
+                    </div>`;
+            }
+        }
+
+        // --- 4. Dual Engine UI Switcher ---
+        function switchMode(mode) {
+            state.activeMode = mode;
+            dom.audio.pause();
+            dom.playerBar.classList.add('translate-y-[150%]');
+            dom.surahView.classList.add('hidden-section');
+            dom.recitersView.classList.remove('hidden-section');
+            document.getElementById('searchInput').value = '';
+
+            const btnVerse = document.getElementById('btnVerseMode');
+            const btnSurah = document.getElementById('btnSurahMode');
+            const repeatBtn = document.getElementById('repeatBtn');
+
+            const activeClass = 'flex-1 sm:w-64 py-3 sm:py-3.5 rounded-full transition-all duration-300 font-bold flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm tracking-wide z-10 bg-white text-slate-950 shadow-[0_4px_20px_rgba(255,255,255,0.25)]';
+            const inactiveClass = 'flex-1 sm:w-64 py-3 sm:py-3.5 rounded-full transition-all duration-300 font-semibold flex items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm tracking-wide z-10 text-gray-400 hover:text-white bg-transparent';
+
+            if(mode === 'verse') {
+                btnVerse.className = activeClass;
+                btnSurah.className = inactiveClass;
+                repeatBtn.classList.remove('hidden');
+                dom.ayahIndicator.classList.remove('hidden');
+                renderRecitersGrid(state.verseReciters);
+            } else {
+                btnSurah.className = activeClass;
+                btnVerse.className = inactiveClass;
+                repeatBtn.classList.add('hidden');
+                dom.ayahIndicator.classList.add('hidden');
+                renderRecitersGrid(state.surahReciters);
+            }
+        }
+
+        // --- 5. Render Directories ---
+        function renderRecitersGrid(data) {
+            dom.grid.innerHTML = '';
+            const fragment = document.createDocumentFragment(); 
+            
+            data.forEach((qari, idx) => {
+                const el = document.createElement('div');
+                el.className = 'glass-card p-4 sm:p-5 rounded-3xl cursor-pointer flex items-center gap-4 group';
+                el.style.animationDelay = `${idx * 0.02}s`;
+                el.classList.add('animate-slide-up');
+                
+                if(state.activeMode === 'verse') {
+                    el.onclick = () => showVerseSurahs(qari);
+                    const initials = qari.reciter_name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                    el.innerHTML = `
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex items-center justify-center text-white font-bold shrink-0 shadow-inner group-hover:from-gold-400 group-hover:to-gold-600 group-hover:text-slate-950 transition-all duration-300 border border-white/5">${initials}</div>
+                        <div class="overflow-hidden flex-1">
+                            <h3 class="font-semibold text-sm sm:text-base text-gray-200 group-hover:text-white truncate transition-colors">${qari.reciter_name}</h3>
+                            <p class="text-[10px] text-gold-500/80 mt-1 uppercase tracking-widest font-medium">${qari.style || 'Standard'}</p>
+                        </div>
+                        <i class="ph-duotone ph-caret-right text-gray-600 group-hover:text-gold-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                    `;
+                } else {
+                    el.onclick = () => showSurahModeSurahs(qari);
+                    const initials = qari.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                    el.innerHTML = `
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl flex items-center justify-center text-white font-bold shrink-0 shadow-inner group-hover:from-blue-400 group-hover:to-blue-600 group-hover:text-slate-950 transition-all duration-300 border border-white/5">${initials}</div>
+                        <div class="overflow-hidden flex-1">
+                            <h3 class="font-semibold text-sm sm:text-base text-gray-200 group-hover:text-white truncate transition-colors">${qari.name}</h3>
+                            <p class="text-[10px] text-blue-400/80 mt-1 uppercase tracking-widest font-medium truncate">${qari.moshafName}</p>
+                        </div>
+                        <i class="ph-duotone ph-caret-right text-gray-600 group-hover:text-blue-400 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all"></i>
+                    `;
+                }
+                fragment.appendChild(el);
+            });
+            dom.grid.appendChild(fragment);
+        }
+
+        // --- 6. ENGINE 1: Verse-by-Verse Logic ---
+        function showVerseSurahs(qari) {
+            const headHtml = `
+                <h3 class="font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-tight truncate">${qari.reciter_name}</h3>
+                <p class="text-[10px] sm:text-xs text-gold-400 font-bold uppercase tracking-widest mt-1">Exact Sync Sync</p>
+            `;
+            dom.qariHeader.innerHTML = headHtml;
+            dom.qariHeaderSmall.innerHTML = `<p class="text-sm font-bold text-white">${qari.reciter_name}</p><p class="text-[10px] text-gold-400 uppercase">Verse Mode</p>`;
+            
+            dom.surahList.innerHTML = '';
+            
+            state.chapters.forEach(c => {
+                const row = document.createElement('div');
+                row.className = 'surah-item p-3 sm:p-4 rounded-2xl hover:bg-white/5 cursor-pointer flex justify-between items-center text-sm transition-all border border-transparent group';
+                row.id = `surah-item-${c.id}`;
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <span class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-800/50 border border-white/5 rounded-xl flex items-center justify-center text-xs text-gray-400 font-mono shadow-inner group-hover:text-white transition-colors">${c.id}</span>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-gray-200 text-xs sm:text-sm">${c.name_simple}</span>
+                            <span class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">${c.translated_name.name}</span>
+                        </div>
+                    </div>
+                    <i class="ph-fill ph-play-circle text-2xl sm:text-3xl text-gray-600/50 play-icon group-hover:text-white transition-colors"></i>
+                `;
+                row.onclick = () => loadExactAyahsData(c.id, c.name_simple, qari.reciter_name, qari.id);
+                dom.surahList.appendChild(row);
+            });
+            
+            dom.recitersView.classList.add('hidden-section');
+            dom.surahView.classList.remove('hidden-section');
+            window.scrollTo(0,0);
+        }
+
+        async function loadExactAyahsData(chapterId, surahName, reciterName, reciterId) {
+            dom.audio.pause();
+            state.ayahsList =[];
+            state.currentAyahIndex = -1;
+            
+            dom.ayahLoader.classList.remove('hidden');
+            dom.ayahContainer.classList.remove('h-full'); 
+            
+            // Update Player Text
+            dom.npSurah.innerText = surahName; dom.npSurahMob.innerText = surahName;
+            dom.npQari.innerText = reciterName; dom.npQariMob.innerText = reciterName;
+            dom.playerBar.classList.remove('translate-y-[150%]');
+            
+            document.querySelectorAll('.surah-item').forEach(el => {
+                el.classList.remove('active-surah');
+                el.querySelector('.play-icon').classList.replace('text-gold-400', 'text-gray-600/50');
+            });
+            const activeItem = document.getElementById(`surah-item-${chapterId}`);
+            if(activeItem) {
+                activeItem.classList.add('active-surah');
+                activeItem.querySelector('.play-icon').classList.replace('text-gray-600/50', 'text-gold-400');
+                if(window.innerWidth > 1024) activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            try {
+                const [textRes, audioRes] = await Promise.all([
+                    fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${chapterId}`),
+                    fetch(`https://api.quran.com/api/v4/recitations/${reciterId}/by_chapter/${chapterId}`)
+                ]);
+                
+                const textData = await textRes.json();
+                const audioData = await audioRes.json();
+
+                state.ayahsList = textData.verses.map(v => {
+                    const audioMatch = audioData.audio_files.find(af => af.verse_key === v.verse_key);
+                    return {
+                        text: v.text_uthmani,
+                        audio: audioMatch ? (audioMatch.url.startsWith('http') ? audioMatch.url : `https://verses.quran.com/${audioMatch.url}`) : null,
+                        num: v.verse_key.split(':')[1]
+                    };
+                });
+
+                let bismillah = (chapterId != 1 && chapterId != 9) ? `<img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Basmala.svg" class="h-10 sm:h-16 mx-auto mb-8 sm:mb-16 mt-4 sm:mt-8 invert opacity-40 hover:opacity-80 transition-opacity drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">` : '';
+                
+                dom.ayahContainer.innerHTML = bismillah + state.ayahsList.map((a, i) => `
+                    <div id="ayah-text-${i}" onclick="playSpecificAyah(${i})" class="ayah-text cursor-pointer mb-6 sm:mb-12 p-6 sm:p-10 rounded-3xl sm:rounded-[2.5rem] opacity-40 hover:opacity-100 hover:bg-white/[0.02]">
+                        <p class="text-3xl sm:text-4xl md:text-[44px] font-arabic text-white leading-loose break-words text-center drop-shadow-md">${a.text}</p>
+                        <div class="flex items-center justify-center mt-6 sm:mt-10 text-badge">
+                            <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 flex items-center justify-center text-xs sm:text-sm font-mono font-bold transition-all bg-slate-900 shadow-inner">${a.num}</span>
+                        </div>
+                    </div>
+                `).join('') + '<div class="h-40 sm:h-64"></div>';
+
+                dom.ayahLoader.classList.add('hidden');
+                playSpecificAyah(0); 
+            } catch(e) {
+                console.error(e);
+                dom.ayahLoader.classList.add('hidden');
+                dom.ayahContainer.innerHTML = `<div class="text-red-400 text-center mt-20 p-6 bg-red-500/10 rounded-3xl border border-red-500/20 max-w-sm mx-auto"><i class="ph-fill ph-warning-circle text-4xl mb-2"></i><p class="text-sm">Network Timeout. Could not load chapter.</p></div>`;
+            }
+        }
+
+        function playSpecificAyah(index) {
+            if(index < 0 || index >= state.ayahsList.length) {
+                dom.playBtn.innerHTML = '<i class="ph-fill ph-play text-2xl sm:text-3xl ml-1"></i>';
+                return;
+            }
+            
+            state.currentAyahIndex = index;
+            const ayah = state.ayahsList[index];
+            dom.ayahIndicator.innerText = `A: ${ayah.num}`;
+            
+            if(!ayah.audio) { playSpecificAyah(index + 1); return; }
+            
+            if(dom.audio.src !== ayah.audio) dom.audio.src = ayah.audio;
+            dom.audio.play().catch(()=>{});
+            dom.playBtn.innerHTML = '<i class="ph-fill ph-pause text-2xl sm:text-3xl"></i>';
+
+            // Seamless Preload Next
+            if(index + 1 < state.ayahsList.length && state.ayahsList[index + 1].audio) {
+                new Audio().src = state.ayahsList[index + 1].audio;
+            }
+            
+            document.querySelectorAll('.ayah-text').forEach(el => {
+                el.classList.remove('active-ayah', 'opacity-100');
+                el.classList.add('opacity-40');
+            });
+            const activeEl = document.getElementById(`ayah-text-${index}`);
+            if (activeEl) {
+                activeEl.classList.remove('opacity-40');
+                activeEl.classList.add('active-ayah', 'opacity-100');
+                
+                // Smart scrolling calculation for centered view
+                const container = dom.ayahContainer.parentElement;
+                const offset = activeEl.offsetTop - (container.clientHeight / 2) + (activeEl.clientHeight / 2);
+                container.scrollTo({ top: offset, behavior: 'smooth' });
+            }
+        }
+
+        // --- 7. ENGINE 2: Full Surah Logic ---
+        function showSurahModeSurahs(qari) {
+            const headHtml = `
+                <h3 class="font-extrabold text-xl sm:text-2xl text-white tracking-tight leading-tight truncate">${qari.name}</h3>
+                <p class="text-[10px] sm:text-xs text-blue-400 font-bold uppercase tracking-widest mt-1">${qari.moshafName}</p>
+            `;
+            dom.qariHeader.innerHTML = headHtml;
+            dom.qariHeaderSmall.innerHTML = `<p class="text-sm font-bold text-white">${qari.name}</p><p class="text-[10px] text-blue-400 uppercase">Full Mode</p>`;
+            
+            dom.surahList.innerHTML = '';
+            const availableSurahs = qari.surahList.split(',');
+            
+            state.chapters.forEach(c => {
+                if(!availableSurahs.includes(String(c.id))) return; 
+                const audioUrl = `${qari.server}${String(c.id).padStart(3, '0')}.mp3`;
+                
+                const row = document.createElement('div');
+                row.className = 'surah-item p-3 sm:p-4 rounded-2xl hover:bg-white/5 cursor-pointer flex justify-between items-center text-sm transition-all border border-transparent group';
+                row.id = `surah-item-${c.id}`;
+                row.innerHTML = `
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <span class="w-8 h-8 sm:w-10 sm:h-10 bg-slate-800/50 border border-white/5 rounded-xl flex items-center justify-center text-xs text-gray-400 font-mono shadow-inner group-hover:text-white transition-colors">${c.id}</span>
+                        <span class="font-bold text-gray-200 text-xs sm:text-sm">${c.name_simple}</span>
+                    </div>
+                    <i class="ph-fill ph-play-circle text-2xl sm:text-3xl text-gray-600/50 play-icon group-hover:text-white transition-colors"></i>
+                `;
+                row.onclick = () => loadContinuousSurah(audioUrl, c.id, c.name_simple, qari.name);
+                dom.surahList.appendChild(row);
+            });
+            
+            dom.recitersView.classList.add('hidden-section');
+            dom.surahView.classList.remove('hidden-section');
+            window.scrollTo(0,0);
+        }
+
+        async function loadContinuousSurah(audioUrl, chapterId, surahName, reciterName) {
+            dom.audio.pause();
+            state.currentAudioUrl = audioUrl;
+            
+            dom.ayahLoader.classList.remove('hidden');
+            dom.ayahContainer.classList.remove('h-full'); 
+            
+            dom.npSurah.innerText = surahName; dom.npSurahMob.innerText = surahName;
+            dom.npQari.innerText = reciterName; dom.npQariMob.innerText = reciterName;
+            dom.playerBar.classList.remove('translate-y-[150%]');
+            
+            document.querySelectorAll('.surah-item').forEach(el => {
+                el.classList.remove('active-surah');
+                el.querySelector('.play-icon').classList.replace('text-gold-400', 'text-gray-600/50');
+            });
+            const activeItem = document.getElementById(`surah-item-${chapterId}`);
+            if(activeItem) {
+                activeItem.classList.add('active-surah');
+                activeItem.querySelector('.play-icon').classList.replace('text-gray-600/50', 'text-gold-400');
+                if(window.innerWidth > 1024) activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            try {
+                const textRes = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${chapterId}`);
+                const textData = await textRes.json();
+                
+                let bismillah = (chapterId != 1 && chapterId != 9) ? `<img src="https://upload.wikimedia.org/wikipedia/commons/2/27/Basmala.svg" class="h-10 sm:h-16 mx-auto mb-8 sm:mb-16 mt-4 sm:mt-8 invert opacity-40 hover:opacity-80 transition-opacity drop-shadow-[0_0_10px_rgba(255,255,255,0.1)]">` : '';
+
+                dom.ayahContainer.innerHTML = bismillah + textData.verses.map(v => `
+                    <div class="mb-6 sm:mb-10 p-6 sm:p-10 rounded-3xl sm:rounded-[2.5rem] opacity-90 border border-transparent hover:bg-white/[0.02] transition-all">
+                        <p class="text-3xl sm:text-4xl md:text-[44px] font-arabic text-white leading-loose break-words text-center drop-shadow-md">${v.text_uthmani}</p>
+                        <div class="flex items-center justify-center mt-6 sm:mt-10">
+                            <span class="w-10 h-10 sm:w-12 sm:h-12 bg-slate-900 rounded-full border border-white/5 flex items-center justify-center text-xs sm:text-sm font-mono font-bold text-gray-500 shadow-inner">${v.verse_key.split(':')[1]}</span>
+                        </div>
+                    </div>
+                `).join('') + '<div class="h-40 sm:h-64"></div>';
+                
+                dom.ayahLoader.classList.add('hidden');
+                dom.ayahContainer.parentElement.scrollTo(0,0);
+                
+                dom.audio.src = audioUrl;
+                dom.audio.play().catch(()=>{});
+                dom.playBtn.innerHTML = '<i class="ph-fill ph-pause text-2xl sm:text-3xl"></i>';
+            } catch(e) {
+                dom.ayahLoader.classList.add('hidden');
+            }
+        }
+
+        // --- 8. Global Player Handlers ---
+        const fmtTime = s => { if(isNaN(s)||!isFinite(s))return"0:00"; const m=Math.floor(s/60); const ss=Math.floor(s%60); return `${m}:${ss<10?'0':''}${ss}`; };
+
+        dom.audio.addEventListener('ended', () => {
+            requestAnimationFrame(() => {
+                if (state.activeMode === 'verse') {
+                    if (state.isRepeating) playSpecificAyah(state.currentAyahIndex);
+                    else playSpecificAyah(state.currentAyahIndex + 1);
+                } else {
+                    dom.playBtn.innerHTML = '<i class="ph-fill ph-play text-2xl sm:text-3xl ml-1"></i>'; 
+                    dom.progress.value = 0; dom.progress.style.background = 'rgba(255,255,255,0.1)';
+                }
+            });
+        });
+
+        dom.audio.addEventListener('timeupdate', () => {
+            if(state.activeMode === 'verse' && state.ayahsList.length > 0) {
+                const pct = (state.currentAyahIndex / (state.ayahsList.length - 1)) * 100;
+                dom.progress.value = pct;
+                dom.progress.style.background = `linear-gradient(to right, #D4AF37 0%, #D4AF37 ${pct}%, rgba(255,255,255,0.1) ${pct}%, rgba(255,255,255,0.1) 100%)`;
+                dom.timeCur.innerText = fmtTime(dom.audio.currentTime);
+                dom.timeTotal.innerText = fmtTime(dom.audio.duration || 0);
+            } else if (state.activeMode === 'surah' && dom.audio.duration) {
+                const pct = (dom.audio.currentTime / dom.audio.duration) * 100;
+                dom.progress.value = pct;
+                dom.progress.style.background = `linear-gradient(to right, #D4AF37 0%, #D4AF37 ${pct}%, rgba(255,255,255,0.1) ${pct}%, rgba(255,255,255,0.1) 100%)`;
+                dom.timeCur.innerText = fmtTime(dom.audio.currentTime);
+                dom.timeTotal.innerText = fmtTime(dom.audio.duration);
+            }
+        });
+
+        dom.progress.addEventListener('input', function() { 
+            if(state.activeMode === 'verse') {
+                const index = Math.round((this.value / 100) * (state.ayahsList.length - 1));
+                playSpecificAyah(index);
+            } else if(dom.audio.duration) {
+                dom.audio.currentTime = (this.value / 100) * dom.audio.duration; 
+            }
+        });
+
+        function togglePlay() {
+            if(!dom.audio.src) return;
+            if(dom.audio.paused) { 
+                dom.audio.play(); 
+                dom.playBtn.innerHTML = '<i class="ph-fill ph-pause text-2xl sm:text-3xl"></i>'; 
+            } else { 
+                dom.audio.pause(); 
+                dom.playBtn.innerHTML = '<i class="ph-fill ph-play text-2xl sm:text-3xl ml-1"></i>'; 
+            }
+        }
+
+        function playNext() {
+            if(state.activeMode === 'verse') playSpecificAyah(state.currentAyahIndex + 1);
+            else if(dom.audio.src) dom.audio.currentTime += 10;
+        }
+
+        function playPrevious() {
+            if(state.activeMode === 'verse') playSpecificAyah(state.currentAyahIndex - 1);
+            else if(dom.audio.src) dom.audio.currentTime -= 10;
+        }
+
+        function toggleRepeat() {
+            state.isRepeating = !state.isRepeating;
+            const icon = document.getElementById('repeatIcon');
+            const btn = document.getElementById('repeatBtn');
+            if(state.isRepeating) {
+                icon.classList.replace('text-gray-400', 'text-gold-400');
+                btn.classList.add('bg-gold-500/10', 'border-gold-500/30');
+                btn.classList.remove('bg-white/5', 'border-transparent');
+            } else {
+                icon.classList.replace('text-gold-400', 'text-gray-400');
+                btn.classList.remove('bg-gold-500/10', 'border-gold-500/30');
+                btn.classList.add('bg-white/5', 'border-transparent');
+            }
+        }
+
+        function showReciters() { 
+            dom.surahView.classList.add('hidden-section'); 
+            dom.recitersView.classList.remove('hidden-section'); 
+            window.scrollTo(0,0);
+            dom.audio.pause();
+            dom.playerBar.classList.add('translate-y-[150%]');
+        }
+
+        // Search logic
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const term = e.target.value.toLowerCase();
+                if(state.activeMode === 'verse') {
+                    renderRecitersGrid(state.verseReciters.filter(r => r.reciter_name.toLowerCase().includes(term) || (r.style && r.style.toLowerCase().includes(term))));
+                } else {
+                    renderRecitersGrid(state.surahReciters.filter(r => r.name.toLowerCase().includes(term) || r.moshafName.toLowerCase().includes(term)));
+                }
+            }, 300);
+        });
+
+        // Launch
+        init();
+    </script>
+</body>
+</html>
